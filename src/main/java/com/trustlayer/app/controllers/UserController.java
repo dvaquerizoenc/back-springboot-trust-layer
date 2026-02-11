@@ -1,5 +1,6 @@
 package com.trustlayer.app.controllers;
 
+import com.trustlayer.app.model.dto.LoginParams;
 import com.trustlayer.app.model.dto.UserResponse;
 import com.trustlayer.app.model.entities.User;
 import com.trustlayer.app.exceptions.UserException;
@@ -17,12 +18,22 @@ public class UserController {
     @Autowired
     private UserManager userManager;
 
-    @PostMapping(path="api/create/user",consumes= MediaType.APPLICATION_JSON_VALUE,
-            produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> altaPersona(@RequestBody User u) {
+    @PostMapping(path="api/auth/signup",consumes= MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerUser(@RequestBody User u) {
         try {
             UserResponse user = userManager.registerUser(u);
             return new ResponseEntity<UserResponse>(user, HttpStatus.CREATED);
+        } catch (UserException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(path="api/auth/login", consumes= MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> loginUser(@RequestBody LoginParams params) {
+        try {
+            return new ResponseEntity<>(userManager.loginUser(params.email(), params.password()), HttpStatus.OK);
         } catch (UserException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {

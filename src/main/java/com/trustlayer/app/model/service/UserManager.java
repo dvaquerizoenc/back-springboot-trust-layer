@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class UserManager {
     @Autowired
@@ -15,6 +16,9 @@ public class UserManager {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtManager jwtManager;
 
     public UserResponse registerUser(User user) {
         if (userDao.existsByEmail(user.getEmail())) {
@@ -28,4 +32,17 @@ public class UserManager {
         return new UserResponse(userSaved.getId(), userSaved.getEmail(), userSaved.getUsername());
     }
 
+    public String loginUser(String email, String password){
+        if (userDao.existsByEmail(email)){
+            User user = userDao.findByEmail(email);
+            boolean correctPassword = passwordEncoder.matches(password, user.getPassword());
+            if (correctPassword) {
+                return jwtManager.generateToken(user.getUsername());
+            } else {
+                return "The password is incorrect";
+            }
+        } else{
+            return "This email doesn't exists";
+        }
+    }
 }

@@ -29,7 +29,8 @@ public class UserManager {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User userSaved = userDao.save(user);
-        return new UserResponse(userSaved.getId(), userSaved.getEmail(), userSaved.getUsername());
+        String token = JwtManager.getInstance().generateToken(userSaved.getUsername());
+        return new UserResponse(userSaved.getId(), userSaved.getUsername(), userSaved.getEmail(), token);
     }
 
     public String loginUser(String email, String password){

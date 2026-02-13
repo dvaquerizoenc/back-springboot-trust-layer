@@ -26,9 +26,10 @@ public class JwtManager {
         return SECRET_KEY;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, Long id) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("id", id)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 360))
                 .signWith(SECRET_KEY)

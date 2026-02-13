@@ -17,4 +17,7 @@ public class User {
     private String password;
     @Column(unique = true, nullable = false)
     private String email;
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = true)
+    private Group group;
 }

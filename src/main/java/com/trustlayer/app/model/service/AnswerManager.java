@@ -13,6 +13,10 @@ public class AnswerManager {
     private  AnswerDao answerDao;
 
     public void saveAnswer(Answer answer) {
+        if (answer.getAnswer() == null || answer.getAnswer().isBlank()) {
+            throw new IllegalArgumentException("Answer text cannot be null or empty");
+        }
+        answer.setAnswer(answer.getAnswer().trim());
         answerDao.save(answer);
     }
 

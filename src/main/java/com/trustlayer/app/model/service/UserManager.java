@@ -29,7 +29,7 @@ public class UserManager {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User userSaved = userDao.save(user);
-        String token = JwtManager.getInstance().generateToken(userSaved.getUsername());
+        String token = JwtManager.getInstance().generateToken(userSaved.getUsername(), userSaved.getId());
         return new UserResponse(userSaved.getId(), userSaved.getUsername(), userSaved.getEmail(), token);
     }
 
@@ -38,7 +38,7 @@ public class UserManager {
             User user = userDao.findByEmail(email);
             boolean correctPassword = passwordEncoder.matches(password, user.getPassword());
             if (correctPassword) {
-                return jwtManager.generateToken(user.getUsername());
+                return jwtManager.generateToken(user.getUsername(), user.getId());
             } else {
                 return "The password is incorrect";
             }
